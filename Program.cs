@@ -12,6 +12,10 @@ namespace MostFrequentNumberInArray
 
             Console.WriteLine(MostFrequentDigitInArray(new int[] { 123, -321, 112, 44, 99 })); // 1
 
+            Console.WriteLine(MostFrequentDigitInArray(new int[] { 1, -1, 7, 8, 7, -1, -1 })); // -1
+
+            Console.WriteLine(MostFrequentDigitInArray(new int[] { })); // felmeddelande
+
             Console.ReadLine();
         }
 
@@ -20,12 +24,13 @@ namespace MostFrequentNumberInArray
         //Regler: Listan kan innehålla positiva och negativa heltal. Använd en Dictionary eller en lista för att hålla koll på förekomster.
         //Optimera koden för att kunna hantera stora listor effektivt.
 
-        public static int MostFrequentDigitInArray(int[] numbersInArray)
+        public static int? MostFrequentDigitInArray(int[] numbersInArray)
         {
             // Felhantering om arrayen är tom eller null
             if (numbersInArray == null || numbersInArray.Length == 0)
             {
-                return -1; // Visar att ingen siffra kunde hittas
+                Console.WriteLine("Array is empty or null. Please provide a valid array.");
+                return null; // Returnera null
             }
 
             // Dictionary för att lagra siffror och hur många gånger varje siffra förekommer
@@ -34,12 +39,26 @@ namespace MostFrequentNumberInArray
             // Loopa igenom alla tal i arrayen
             foreach (int number in numbersInArray)
             {
-                int currentNumber = Math.Abs(number); // Gör negativa tal positiva
+                // Om talet är noll, hantera det separat
+                if (number == 0)
+                {
+                    if (digitOccurrences.ContainsKey(0))
+                    {
+                        digitOccurrences[0]++;
+                    }
+                    else
+                    {
+                        digitOccurrences[0] = 1;
+                    }
+                    continue; // Hoppa till nästa tal i arrayen
+                }
+
+                int currentNumber = number; // Behåll negativt tecken om det finns
 
                 // Gå igenom varje siffra i det aktuella talet
-                while (currentNumber > 0)
+                while (currentNumber != 0)
                 {
-                    int lastDigit = currentNumber % 10; // Hämta sista siffran i talet, för att dela upp om talet är större än 10
+                    int lastDigit = currentNumber % 10; // Hämta sista siffran (med eventuellt negativt tecken)
 
                     // Lägg till eller uppdatera antalet gånger siffran förekommer
                     if (digitOccurrences.ContainsKey(lastDigit))
@@ -51,12 +70,12 @@ namespace MostFrequentNumberInArray
                         digitOccurrences[lastDigit] = 1;
                     }
 
-                    currentNumber /= 10; // Ta bort sista siffran genom att dela med 10
+                    currentNumber /= 10; // Ta bort sista siffran
                 }
             }
 
             // Hitta den mest förekommande siffran
-            int mostFrequentDigit = -1;
+            int mostFrequentDigit = int.MaxValue; // Sätt till maxvärdet för att garantera att vi hittar en lägre siffra
             int highestFrequency = 0;
 
             foreach (var digitEntry in digitOccurrences)
@@ -75,6 +94,5 @@ namespace MostFrequentNumberInArray
 
             return mostFrequentDigit;
         }
-
     }
 }
